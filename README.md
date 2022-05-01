@@ -1,27 +1,27 @@
 # Rhapsody Testnet
+
 Quicksilver Testnet Instructions and Config
 
 **If you experience any bugs, issues or problems, please raise an issue here:** https://github.com/ingenuity-build/quicksilver
 
 ## Details
 
- - Chain-ID: `quicktest-1`
- - Launch Date: 2022-04-30
- - Current Version: `v0.1.1`
- - Genesis File: https://raw.githubusercontent.com/ingenuity-build/testnets/main/rhapsody/genesis.json
-
+- Chain-ID: `quicktest-1`
+- Launch Date: 2022-04-30
+- Current Version: `v0.1.1`
+- Genesis File: https://raw.githubusercontent.com/ingenuity-build/testnets/main/rhapsody/genesis.json
 
 ### Nodes
+
 We are running the following nodes:
 
- - node02.quicktest-1.quicksilver.zone:26657
- - node03.quicktest-1.quicksilver.zone:26657
- - node04.quicktest-1.quicksilver.zone:26657
+- node02.quicktest-1.quicksilver.zone:26657
+- node03.quicktest-1.quicksilver.zone:26657
+- node04.quicktest-1.quicksilver.zone:26657
 
 Seeds:
 
- - dd3460ec11f78b4a7c4336f22a356fe00805ab64@seed.quicktest-1.quicksilver.zone:26656
-
+- dd3460ec11f78b4a7c4336f22a356fe00805ab64@seed.quicktest-1.quicksilver.zone:26656
 
 ## Configuration
 
@@ -34,24 +34,24 @@ Download and build Quicksilver:
 Testnet configuration script (`touch scripts/testnet-conf.sh`):
 
     #!/bin/bash -i
-    
+
     set -xe
-    
+
     ### CONFIGURATION ###
-    
+
     CHAIN_ID=quicktest-1
-    
+
     GENESIS_URL="https://raw.githubusercontent.com/ingenuity-build/testnets/main/rhapsody/genesis.json"
     SEEDS="dd3460ec11f78b4a7c4336f22a356fe00805ab64@seed.quicktest-1.quicksilver.zone:26656"
-    
+
     BINARY=./build/quicksilverd
     NODE_HOME=$HOME/.quicksilverd
-    
+
     # SET this value for your node:
     NODE_MONIKER="Your_Node"
-    
+
     ### OPTIONAL STATE ###
-    
+
     # if you set this to true, please have TRUST HEIGHT and TRUST HASH and RPC configured
     export STATE_SYNC=false
     # set height
@@ -59,16 +59,16 @@ Testnet configuration script (`touch scripts/testnet-conf.sh`):
     # set hash
     export TRUST_HASH=""
     export SYNC_RPC="http://node02.quicktest-1.quicksilver.zone:26657,http://node03.quicktest-1.quicksilver.zone:26657,http://node04.quicktest-1.quicksilver.zone:26657"
-    
+
     echo  "Initializing $CHAIN_ID..."
     $BINARY config chain-id $CHAIN_ID --home $NODE_HOME
     $BINARY config keyring-backend test --home $NODE_HOME
     $BINARY config broadcast-mode block --home $NODE_HOME
     $BINARY init $NODE_MONIKER --chain-id $CHAIN_ID --home $NODE_HOME
-    
+
     echo "Get genesis file..."
     curl -sSL $GENESIS_URL > $NODE_HOME/config/genesis.json
-    
+
     if  $STATE_SYNC; then
         echo  "Enabling state sync..."
         sed -i -e '/enable =/ s/= .*/= true/'  $NODE_HOME/config/config.toml
@@ -78,7 +78,7 @@ Testnet configuration script (`touch scripts/testnet-conf.sh`):
     else
         echo  "Disabling state sync..."
     fi
-    
+
     echo "Set seeds..."
     sed -i -e "/seeds =/ s/= .*/= \"$SEEDS\"/"  $NODE_HOME/config/config.toml
 
@@ -86,18 +86,20 @@ Run this script from the quicksilver repository main directory;
 
 Remember to make it executable:
 
-    chmod +x scripts/testnet_conf.sh
+    chmod +x scripts/testnet-conf.sh
 
 Then simply run:
 
-    ./scripts/testnet_conf.sh
+    ./scripts/testnet-conf.sh
 
 ## Running your node
+
 At this point you can run the node on the CLI with `./build/quicksilverd start` to ensure everything is configured correctly. At this point you may configure your system to run Quicksilver as a system service or daemon.
 
 ## Upgrade to Validator
 
 ### Test Wallet
+
 To run as a validator you will need to create a QCK wallet:
 
     ./build/quicksilverd keys add $YOUR_TEST_WALLET --keyring-backend=test
@@ -110,8 +112,8 @@ If you already have a test wallet you want to use run (and enter your mnemonic):
 
 Join our discord server to access the faucets for QCK and ATOM. Make sure you are in the appropriate channel:
 
- - **qck-tap** for QCK tokens;
- - **atom-tap** for ATOM tokens;
+- **qck-tap** for QCK tokens;
+- **atom-tap** for ATOM tokens;
 
 To check the faucet address:
 
@@ -140,7 +142,6 @@ Then simply run the tx to upgrade to validator status:
       --commission-max-change-rate=0.1 \
       --min-self-delegation=1 \
       --pubkey=$($BINARY tendermint show-validator)
-
 
 ## Using minting qAtoms on Quicksilver
 
